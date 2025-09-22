@@ -1,6 +1,6 @@
 # work through p.47, def'n 4.4.1 and thm 4.4.2 of Vickers, *Topology via Logic*, via concrete examples
 
-# -- Semilattice ---------------------------------------------------------------
+# -- Semilattices --------------------------------------------------------------
 
 # operations in the semilattice
 def isect(x,y):
@@ -100,6 +100,40 @@ def coverage(c,ds):
 def non_taut(cs):
     return [c for c in cs for u,a in [c.split()] if a not in u]
 
+# -- Frames --------------------------------------------------------------------
+
+# operations in the frame
+
+# meet in the frame is just intersection
+def meet(x,y,fs):
+    return isect(x,y)
+
+# join in the frame is the LUB
+def join(x,y,fs):
+    s = union(x,y)
+    n, f = min((len(f),f) for f in fs if isect(s,f)==s)
+    return f
+
+# check that a frame is closed under meet and join
+def assert_frame_closure(fs):
+  for x in fs:
+    for y in fs:
+      assert(meet(x,y,fs) in fs)
+      assert(join(x,y,fs) in fs)
+
+# check that a frame is distributive
+def assert_frame_distr(fs):
+  for x in fs:
+    for y in fs:
+      for z in fs:
+         a = meet(x,join(y,z,fs),fs)
+         b = join(meet(x,y,fs),meet(x,z,fs),fs)
+         assert(a == b)
+
+# f takes a semilattice elt s to its frame representative
+def f(s,fs):
+    return join(s,s,fs)
+
 # ------------------------------------------------------------------------------
 if __name__=="__main__":
     # we should've ensured this by hand
@@ -125,3 +159,18 @@ if __name__=="__main__":
     print(non_taut(coverage("xy 1",m3)))
     for d in c_ideals(coverage("xy 1",m3),m3):
         print(d)
+
+    f5 = c_ideals(coverage("xy 1",n5),n5)
+    assert_frame_closure(f5)
+    assert_frame_distr(f5)
+
+    f3 = c_ideals(coverage("xy 1",m3),m3)
+    assert_frame_closure(f3)
+    assert_frame_distr(f3)
+
+    print("")
+    for d in sorted(n5):
+        print(d + " " + f(d,f5))
+    print("----")
+    for d in sorted(m3):
+        print(d + " " + f(d,f3))
