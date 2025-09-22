@@ -1,6 +1,12 @@
 # work through p.47, def'n 4.4.1 and thm 4.4.2 of Vickers, *Topology via Logic*, via concrete examples
 
-# concrete downsets
+def isect(x,y):
+    return "".join(sorted(set(x)&set(y)))
+
+def union(x,y):
+    return "".join(sorted(set(x)|set(y)))
+
+# some concrete downsets
 # N5: pentagon lattice
 n5 = set("""
 0
@@ -24,3 +30,28 @@ m3 = set("""
 0xyz
 01xyz
 """.split())
+
+# check that a system of downsets is closed under intersection and union
+def assert_closure(ds):
+  for x in ds:
+    for y in ds:
+      assert(isect(x,y) in ds)
+      assert(union(x,y) in ds)
+
+# check that a system of downsets is distributive
+def assert_distr(ds):
+  for x in ds:
+    for y in ds:
+      for z in ds:
+         a = isect(x,union(y,z))
+         b = union(isect(x,y),isect(x,z))
+         assert(a == b)
+
+if __name__=="__main__":
+    # we should've ensured this by hand
+    assert_closure(n5)
+    assert_closure(m3)
+
+    # the lattices are not distributive, but their downsets are
+    assert_distr(n5)
+    assert_distr(m3)
