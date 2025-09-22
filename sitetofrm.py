@@ -170,7 +170,7 @@ if __name__=="__main__":
 
     print("")
     for d in sorted(n5):
-        print(d + " " + f(d,f5))
+        print(d + "\t" + f(d,f5))
     print("----")
     for d in sorted(m3):
-        print(d + " " + f(d,f3))
+        print(d + "\t" + f(d,f3))
