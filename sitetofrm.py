@@ -96,6 +96,10 @@ def coverage(c,ds):
     return sorted(set("".join(sorted(set(meet(t,s,ds) for t in u)))+" "+s
         for s in alpha(ds) if le(s,a,ds)))
 
+# filter out tautological covers
+def non_taut(cs):
+    return [c for c in cs for u,a in [c.split()] if a not in u]
+
 # ------------------------------------------------------------------------------
 if __name__=="__main__":
     # we should've ensured this by hand
@@ -110,10 +114,14 @@ if __name__=="__main__":
     assert_reps(n5)
     assert_reps(m3)
 
-    print(coverage("xy 1",n5))
+    assert(c_ideals(coverage("xy 1",n5),n5) ==
+           c_ideals(non_taut(coverage("xy 1",n5)),n5))
+    print(non_taut(coverage("xy 1",n5)))
     for d in c_ideals(coverage("xy 1",n5),n5):
         print(d)
     print("----")
-    print(coverage("xy 1",m3))
+    assert(c_ideals(coverage("xy 1",m3),m3) ==
+           c_ideals(non_taut(coverage("xy 1",m3)),m3))
+    print(non_taut(coverage("xy 1",m3)))
     for d in c_ideals(coverage("xy 1",m3),m3):
         print(d)
