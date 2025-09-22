@@ -1,5 +1,8 @@
 # work through p.47, def'n 4.4.1 and thm 4.4.2 of Vickers, *Topology via Logic*, via concrete examples
 
+# -- Semilattice ---------------------------------------------------------------
+
+# operations in the semilattice
 def isect(x,y):
     return "".join(sorted(set(x)&set(y)))
 
@@ -72,6 +75,28 @@ def assert_reps(ds):
        if rep(d,ds): # ignore non-principal downsets
            assert(lower(rep(d,ds),ds)==d)
 
+# -- Coverages -----------------------------------------------------------------
+
+# cover c is compatible with downset d
+def covers(c,d):
+    u,a = c.split()
+    return not isect(u,d)==u or isect(a,d)==a
+
+# the c-ideals are the downsets in ds compatible with the coverage cs
+def c_ideals(cs,ds):
+    return set(d for d in ds if all(covers(c,d) for c in cs))
+
+# generate a principal coverage
+def coverage(c,ds):
+    def meet(x,y,ds):
+        a = set(lower(x,ds))
+        b = set(lower(y,ds))
+        return rep("".join(sorted(a&b)),ds)
+    u,a = c.split()
+    return sorted(set("".join(sorted(set(meet(t,s,ds) for t in u)))+" "+s
+        for s in alpha(ds) if le(s,a,ds)))
+
+# ------------------------------------------------------------------------------
 if __name__=="__main__":
     # we should've ensured this by hand
     assert_closure(n5)
@@ -84,3 +109,11 @@ if __name__=="__main__":
     # lower and rep should be inverse on principal downsets
     assert_reps(n5)
     assert_reps(m3)
+
+    print(coverage("xy 1",n5))
+    for d in c_ideals(coverage("xy 1",n5),n5):
+        print(d)
+    print("----")
+    print(coverage("xy 1",m3))
+    for d in c_ideals(coverage("xy 1",m3),m3):
+        print(d)
